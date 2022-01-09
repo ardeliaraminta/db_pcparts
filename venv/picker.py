@@ -29,21 +29,34 @@ class PC_Picker:
 
         self.options_list = ["GEFORCE RTX 3090 ", "GEFORCE RTX 3080", "GEOFORCE RTX 3070", "GEFORCE RTX 3060"]
         self.value = StringVar(root)
-        self.value.set("Select VGA:")
+        self.value.set(" VGA:")
         self.drop = OptionMenu(root,self.value, *self.options_list)
         self.drop.place(x=230,y=100,width=120,height=40)
     
         self.options_list2 = ["AMD Ryzen 9", "AMD Ryzen 7", "AMD Ryzen 5"]
         self.value2 = StringVar(root)
-        self.value2.set("Select CPU:")
+        self.value2.set("CPU:")
         self.drop2 = OptionMenu(root,self.value2, *self.options_list2)
         self.drop2.place(x=230,y=150,width=150,height=40)
 
         self.options_list3 = [" 8 GB", "16 GB", "32 GB"]
         self.value3 = StringVar(root)
-        self.value3.set("Select Memory:")
+        self.value3.set("Memory:")
         self.drop3 = OptionMenu(root,self.value3, *self.options_list3)
         self.drop3.place(x=230,y=200,width=150,height=40)
+
+        self.options_list3 = [" Windows Home 7", "Windows Home 8", "Windows Home 10"]
+        self.value3 = StringVar(root)
+        self.value3.set("Operating System:")
+        self.drop3 = OptionMenu(root,self.value3, *self.options_list3)
+        self.drop3.place(x=230,y=250,width=150,height=40)
+
+
+        self.options_list4 = [" Windows Home 7", "Windows Home 8", "Windows Home 10"]
+        self.value4 = StringVar(root)
+        self.value4.set("Operating System:")
+        self.drop4 = OptionMenu(textvariable=self.vga, *self.options_list3)
+        self.drop4.place(x=230,y=250,width=150,height=40)
 
     
        
@@ -51,13 +64,9 @@ class PC_Picker:
         self.submit_button.place(x=600,y=700,width=150,height=40)
 
 
+#self.options_list[0], self.options_list[1], self.options_list[2], self.options_list[3] textvariable=self.vga
 
 
-#self.options_list[0], self.options_list[1], self.options_list[2], self.options_list[3]
-
-
-
-  
 
 if __name__ == "__main__":
     root = Tk()
