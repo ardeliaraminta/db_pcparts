@@ -1,5 +1,6 @@
 from mysql.connector import connect
 import mysql.connector
+import datetime as dt
 
 __db = connect(
     host="sigma.jasoncoding.com",
@@ -30,6 +31,7 @@ def create_tables():
     "product_name VARCHAR(50) NOT NULL,"
     "price FLOAT NOT NULL,"
     "category_id INT(6) UNSIGNED NOT NULL,"
+    "Stock INT(6) UNSIGNED NOT NULL,"
     "FOREIGN KEY (category_id) REFERENCES Category (id) ON UPDATE CASCADE"
     ")")
   cursor.execute(query)
@@ -70,15 +72,27 @@ def insert_category(name):
   query = (f"INSERT INTO Category (name) values ('{name}')")
   cursor.execute(query)
 
-def insert_product(name, price, category_id):
+def insert_product(name, price, category_id,stock):
   '''Enters a new product into the database'''
   __db = getDb()
   cursor = __db.cursor()
 
-  query = ("INSERT INTO Products (product_name, price, category_id) values ("
-  f"'{name}', '{price}', '{category_id}'"
+  query = ("INSERT INTO Products (product_name, price, category_id, Stock) values ("
+  f"'{name}', '{price}', '{category_id}', {stock}"
   ")")
   cursor.execute(query)
+
+# def insert_cust(first_name, email, contact_number, address, city, state, last_name, zip_code):
+#   '''Enters a new customer into the database'''
+#   __db = getDb()
+#   cursor = __db.cursor()
+
+#   query = "INSERT INTO Customers (first_Name, last_Name, email, contact_number, address, city, State, zip) values ("
+#   query += f"'{first_name}', '{last_name}', '{email}', '{contact_number}', '{address}', '{city}', '{state}', '{zip_code}'"
+#   query += ")"
+  
+#   cursor.execute(query)
+#   print(query)
 
 def insert_customer(first_name, email, contact_number, address, city, state, last_name=None, zip_code=None):
   '''Enters a new customer into the database'''
@@ -100,6 +114,7 @@ def insert_customer(first_name, email, contact_number, address, city, state, las
   query += ")"
   
   cursor.execute(query)
+  print(query)
 
 def insert_order_transaction(customer_id, product_id, quantity, payment_type, order_date, tax, total_amount):
   '''Enters a new order transaction into the database'''
@@ -111,5 +126,108 @@ def insert_order_transaction(customer_id, product_id, quantity, payment_type, or
   ")")
   cursor.execute(query)
 
-# create_tables()
-insert_category('CPU')
+def get_all_categories():
+  '''Returns all categories in the database'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = "SELECT * FROM Category"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+def get_all_products():
+  '''Returns all products in the database'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = "SELECT * FROM Products"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+def get_history_order(customer_id):
+  '''Returns all order transactions in the database'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = f"SELECT * FROM Order_Transaction WHERE Customer_ID = {customer_id}"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+def get_all_orders_of_customers():
+  '''Returns all order transactions in the database'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = "SELECT * FROM Order_Transaction"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+def search_products(name):
+  '''Returns all products in the database'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = f"SELECT id,product_name,price FROM Products WHERE product_name LIKE '%{name}%'"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+def get_all_customers():
+  '''Returns all customers in the database'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = "SELECT * FROM Customers"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+def get_tax(product_id):
+  '''Returns the tax of a product'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = f"SELECT price FROM Products WHERE id = {product_id}"
+  cursor.execute(query)
+  price = cursor.fetchone()
+  tax = price[0]*0.08
+  return tax
+
+def get_total_amount(product_id,quantity):
+  '''Returns the total amount of a product'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = f"SELECT price FROM Products WHERE id = {product_id}"
+  cursor.execute(query)
+  price = cursor.fetchone()
+  tax=get_tax(product_id)
+  total = (price[0]*quantity)+tax
+  return total
+
+def create_order_transaction(product_id,customer_id,quantity,payment_type,order_date):
+  '''Creates an order transaction'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = ("INSERT INTO Order_Transaction (Customer_ID, Product_ID, quantity, Payment_type, Order_Date, Tax, total_amount) values ("
+  f"'{customer_id}', '{product_id}', '{quantity}', '{payment_type}', '{order_date}', '{get_tax(product_id)}', '{get_total_amount(product_id,quantity)}'"
+  ")")
+  cursor.execute(query)
+
+def delete_product_from_order(product_id,order_id):
+  '''Deletes a product from an order'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = f"DELETE FROM Order_Transaction WHERE Product_ID = {product_id} AND id = {order_id}"
+  cursor.execute(query)
+
+
+print(get_all_customers())
+create_order_transaction(1,15,1,"Credit Card", "2020-01-01")
+print(get_all_orders_of_customers())
