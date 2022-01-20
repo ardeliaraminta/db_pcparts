@@ -1,5 +1,4 @@
 from mysql.connector import connect
-import mysql.connector
 import datetime as dt
 
 __db = connect(
@@ -81,18 +80,8 @@ def insert_product(name, price, category_id,stock):
   f"'{name}', '{price}', '{category_id}', {stock}"
   ")")
   cursor.execute(query)
+  __db.commit()
 
-# def insert_cust(first_name, email, contact_number, address, city, state, last_name, zip_code):
-#   '''Enters a new customer into the database'''
-#   __db = getDb()
-#   cursor = __db.cursor()
-
-#   query = "INSERT INTO Customers (first_Name, last_Name, email, contact_number, address, city, State, zip) values ("
-#   query += f"'{first_name}', '{last_name}', '{email}', '{contact_number}', '{address}', '{city}', '{state}', '{zip_code}'"
-#   query += ")"
-  
-#   cursor.execute(query)
-#   print(query)
 
 def insert_customer(first_name, email, contact_number, address, city, state, last_name=None, zip_code=None):
   '''Enters a new customer into the database'''
@@ -114,6 +103,7 @@ def insert_customer(first_name, email, contact_number, address, city, state, las
   query += ")"
   
   cursor.execute(query)
+  __db.commit()
   print(query)
 
 def insert_order_transaction(customer_id, product_id, quantity, payment_type, order_date, tax, total_amount):
@@ -125,6 +115,7 @@ def insert_order_transaction(customer_id, product_id, quantity, payment_type, or
   f"'{customer_id}', '{product_id}', '{quantity}', '{payment_type}', '{order_date}', '{tax}', '{total_amount}'"
   ")")
   cursor.execute(query)
+  __db.commit()
 
 def get_all_categories():
   '''Returns all categories in the database'''
@@ -218,6 +209,9 @@ def create_order_transaction(product_id,customer_id,quantity,payment_type,order_
   f"'{customer_id}', '{product_id}', '{quantity}', '{payment_type}', '{order_date}', '{get_tax(product_id)}', '{get_total_amount(product_id,quantity)}'"
   ")")
   cursor.execute(query)
+  query_to_update_stock = f"UPDATE Products SET Stock = Stock - {quantity} WHERE id = {product_id}"
+  cursor.execute(query_to_update_stock)
+  __db.commit()
 
 def delete_product_from_order(product_id,order_id):
   '''Deletes a product from an order'''
@@ -226,8 +220,71 @@ def delete_product_from_order(product_id,order_id):
 
   query = f"DELETE FROM Order_Transaction WHERE Product_ID = {product_id} AND id = {order_id}"
   cursor.execute(query)
+  __db.commit()
+
+#join customer product and order on order
+def receipt(first_name,last_name):
+  '''Returns a receipt of an order'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = "SELECT c.first_Name, c.last_Name, c.email, p.product_name, p.price, o.quantity, o.Payment_type, o.Order_Date, o.Tax, o.total_amount, t.name FROM Customers c INNER JOIN Order_Transaction o on c.id=o.Customer_ID INNER JOIN Products p on o.Product_ID=p.id INNER JOIN Category t on p.category_id=t.id"
+  query+=f" WHERE c.first_Name='{first_name}' AND c.last_Name='{last_name}'"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+def get_total_receipt(first_name, last_name):
+  '''Returns a receipt of an order'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = "SELECT o.total_amount FROM Customers c INNER JOIN Order_Transaction o on c.id=o.Customer_ID INNER JOIN Products p on o.Product_ID=p.id INNER JOIN Category t on p.category_id=t.id "
+  query+=f" WHERE c.first_Name='{first_name}' AND c.last_Name='{last_name}'"
+  cursor.execute(query)
+  total_list=cursor.fetchall()
+  total=0
+  for cost in total_list:
+    total+=cost[0]
+  return total
+
+def get_products_per_category(category_name):
+  '''Returns all products in a category'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = f"SELECT p.product_name, p.price, c.name FROM Products p INNER JOIN Category c on p.category_id=c.id WHERE c.name = '{category_name}'"
+  cursor.execute(query)
+
+  return cursor.fetchall()
 
 
-print(get_all_customers())
-create_order_transaction(1,15,1,"Credit Card", "2020-01-01")
-print(get_all_orders_of_customers())
+def get_products_by_ascending_price():
+  '''Returns all products in a category'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = f"SELECT p.product_name, p.price, c.name FROM Products p INNER JOIN Category c on p.category_id=c.id ORDER BY p.price ASC"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+def get_products_by_descending_price():
+  '''Returns all products in a category'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = f"SELECT p.product_name, p.price, c.name FROM Products p INNER JOIN Category c on p.category_id=c.id ORDER BY p.price DESC"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+def get_products_by_price_range(price_range_min,price_range_max):
+  '''Returns all products in a category'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = f"SELECT p.product_name, p.price, c.name FROM Products p INNER JOIN Category c on p.category_id=c.id WHERE p.price BETWEEN {price_range_min} AND {price_range_max}"
+  cursor.execute(query)
+
+  return cursor.fetchall()
