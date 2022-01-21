@@ -49,7 +49,7 @@ class login_page:
                 if row == None:
                     messagebox.showerror("Error!","Invalid USERNAME & PASSWORD",parent=self.window)
                 else:
-                    messagebox.showinfo("Success","Wellcome to the PySeek family",parent=self.window)
+                    messagebox.showinfo("Success","Welcome to PC Parts picker",parent=self.window)
                     self.reset_fields()
                     connection.close()
 
