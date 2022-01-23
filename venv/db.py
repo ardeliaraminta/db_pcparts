@@ -228,7 +228,7 @@ def receipt(first_name,last_name):
   __db = getDb()
   cursor = __db.cursor()
 
-  query = "SELECT c.first_Name, c.last_Name, c.email, p.product_name, p.price, o.quantity, o.Payment_type, o.Order_Date, o.Tax, o.total_amount, t.name FROM Customers c INNER JOIN Order_Transaction o on c.id=o.Customer_ID INNER JOIN Products p on o.Product_ID=p.id INNER JOIN Category t on p.category_id=t.id"
+  query = "SELECT c.first_Name, c.last_Name, c.email, p.product_name, p.price, o.quantity, o.Payment_type, o.Order_Date, o.Tax, o.total_amount, t.name, s.first_name, s.last_name FROM Customers c INNER JOIN Order_Transaction o on c.id=o.Customer_ID INNER JOIN Products p on o.Product_ID=p.id INNER JOIN Category t on p.category_id=t.id INNER JOIN staff s on s.id=o.staff_id"
   query+=f" WHERE c.first_Name='{first_name}' AND c.last_Name='{last_name}'"
   cursor.execute(query)
 
@@ -288,3 +288,77 @@ def get_products_by_price_range(price_range_min,price_range_max):
   cursor.execute(query)
 
   return cursor.fetchall()
+
+def get_all_manufacturer():
+  '''Returns all manufacturers in the database'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = "SELECT * FROM Manufacturers"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+def get_all_staff():
+  '''Returns all staff in the database'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = "SELECT * FROM staff"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+def get_orders_of_staff(first_name,last_name):
+  '''Returns all orders of a staff'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = f"SELECT * FROM Order_Transaction WHERE staff_id = (SELECT id FROM staff WHERE first_name = '{first_name}' AND last_name = '{last_name}')"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+def count_duplicate_staff(first_name, last_name,contact_number,address):
+  '''Counts duplicate staff'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = f"SELECT COUNT(*) FROM staff WHERE first_name = '{first_name}' AND last_name = '{last_name}' AND contact_number = '{contact_number}' AND address = '{address}'"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+def add_staff(first_name, last_name,contact_number,address):
+  '''Adds a staff to the database'''
+  if count_duplicate_staff(first_name,last_name,contact_number, address)[0]>1:
+    return "Staff already exists"
+  else:
+    __db = getDb()
+    cursor = __db.cursor()
+
+    query = f"INSERT INTO staff (first_name, last_name, contact_number, address) VALUES ('{first_name}', '{last_name}', '{contact_number}', '{address}')"
+    cursor.execute(query)
+    __db.commit()
+
+def delete_duplicate_staff():
+  '''Deletes duplicate staff'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = f"DELETE t1 FROM staff t1 INNER JOIN staff t2 WHERE t1.id < t2.id AND t1.first_name = t2.first_name AND t1.last_name=t2.last_name AND t1.contact_number=t2.contact_number AND t1.address=t2.address;"
+  cursor.execute(query)
+  __db.commit()
+
+def get_products_by_manufacturer(manufacturer_name):
+  '''Returns all products of a manufacturer'''
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = f"SELECT p.product_name, p.price, c.name FROM Products p INNER JOIN Category c on p.category_id=c.id INNER JOIN Manufacturers m on p.id=product_id WHERE m.manufacturer = '{manufacturer_name}'"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+print(get_products_by_manufacturer("Nvidia"))
+
