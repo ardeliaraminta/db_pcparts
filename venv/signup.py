@@ -3,6 +3,9 @@ from PIL import Image, ImageTk
 from tkinter import ttk, messagebox
 import pymysql, os
 
+
+
+# we need to add costumer details : first_name, email, contact_number, address, city, state, last_name=None, zip_code=None
 class SignUp:
     def __init__(self, root):
         self.window = root
@@ -100,6 +103,14 @@ class SignUp:
         self.questions.current(0)
         self.answer_txt.delete(0, END)
         self.password_txt.delete(0, END)
+
+
+    def redirect_window(self):
+        self.window.destroy()
+        from login import login_page
+        root = Tk()
+        obj = login_page(root)
+        root.mainloop()
 
 if __name__ == "__main__":
     root = Tk()
