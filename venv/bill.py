@@ -205,6 +205,7 @@ class Bill_App:
         self.product_price.set(str(self.total_product_price))
         print(self.product_price.get())
         self.billing_price = float(self.product_price.get())
+
         
         
 
@@ -256,8 +257,13 @@ class Bill_App:
                     self.total_product_price += self.mondb[x][2] 
             self.textarea.insert(END, f"{self.monitor.get()}\t\t{self.monitorqt.get()}\t  {(self.mondb[index][2])}")
 
+        tax_product = self.total_product_price*0.1
+        self.total_product_price += tax_product
+
         self.textarea.insert(END,"\n-----------------------------------")
+        self.textarea.insert(END, f"\nTax\t\t\t{tax_product}")
         self.textarea.insert(END, f"\nTotal price\t\t\t{self.total_product_price}")
+
         self.save_bill()
         
 
