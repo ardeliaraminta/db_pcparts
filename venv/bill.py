@@ -15,7 +15,7 @@ class Bill_App:
     vgab = []
     mondb = []
     ramdb = []
-    total = 0 
+    total_product_price = 0 
 
 
     def __init__(self, root):
@@ -128,7 +128,6 @@ class Bill_App:
         os = OptionMenu(F2,self.os, *self.options_list4)
         os.place(x=100,y=65,width=80,height=30)
 
-        print(self.options_list4)
 
 
         ram_lb = Label(F2, text="RAM : ", font=("times new roman", 16, "bold"),bg="maroon",fg="white").grid(row=2, column=0, padx=10, pady=10, sticky="w")
@@ -183,14 +182,10 @@ class Bill_App:
         F6.place(x=0, y=560,relwidth=1, height=140)
 
         m1_lbl = Label(F6, text="Total price of product" ,font=("times new roman",14,"bold")).grid(row=0, column=0,padx=20,pady=1,sticky="w")
-        m1_txt = Entry(F6,width=18, textvariable=self.product_price,font="arial 10 bold",bd=7,relief=SUNKEN).grid(row=0, column=1,padx=10,pady=1)
+        m1_txt = Entry(F6,width=18, textvariable=self.total_product_price,font="arial 10 bold",bd=7,relief=SUNKEN).grid(row=0, column=1,padx=10,pady=1)
 
 
         # =================================================
-
-
-        c1_lbl = Label(F6, text="product tax" ,font=("times new roman",14,"bold")).grid(row=0, column=2,padx=20,pady=1,sticky="w")
-        c1_txt = Entry(F6,width=18, textvariable=self.product_tax,font="arial 10 bold",bd=7,relief=SUNKEN).grid(row=0, column=3,padx=10,pady=1)
 
         c2_lbl = Label(F6, text="Product Tax" ,font=("times new roman",14,"bold")).grid(row=1, column=2,padx=20,pady=1,sticky="w")
         c2_txt = Entry(F6,width=18, textvariable=self.g_tax,font="arial 10 bold",bd=7,relief=SUNKEN).grid(row=1, column=3,padx=10,pady=1)
@@ -200,16 +195,17 @@ class Bill_App:
         btn_F.place(x=750, width=580, height=105)
 
         total_btn = Button(btn_F, command=self.total, text="Total", bg="maroon", fg="white",pady=15, width=11, font="arial 12 bold").grid(row=0, column=0,padx=5,pady=5)
-        Gbill = Button(btn_F, command=self.bill_area, text="Generate Bill", bg="maroon", fg="white",pady=15, width=11, font="arial 12 bold").grid(row=0, column=1,padx=5,pady=5)
+        Gbill = Button(btn_F, command=self.bill_area, text="Generate Bill", bg="maroon", fg="white",pady=15, width = 20, font="arial 12 bold").grid(row=0, column=1,padx=5,pady=5)
         Clear = Button(btn_F, text="Clear", bg="maroon", fg="white",pady=15, width=11, font="arial 12 bold").grid(row=0, column=2,padx=5,pady=5)
         Exit = Button(btn_F, text="Exit", bg="maroon", fg="white",pady=15, width=11, font="arial 12 bold").grid(row=0, column=3,padx=5,pady=5)
         self.welcome_bill()
 
     def total(self):
         
-        self.total_product_price =(self.vgaqt.get()*999 + self.osqt.get()*199 + self.cpuqt.get()*1199)
         self.product_price.set(str(self.total_product_price))
+        print(self.product_price.get())
         self.billing_price = float(self.product_price.get())
+        
         
 
     def welcome_bill(self):
@@ -226,45 +222,42 @@ class Bill_App:
     def bill_area(self):
         self.welcome_bill()
         # products
-        self.total = 0
+        self.total_product_price = 0
         if self.vgaqt.get()!=0 :
             index = -1
             for x in range(len(self.vgab)):
                 if self.vgab[x][1] == self.vga.get():
                     index = x
-                    self.total += self.vgab[x][2]
+                    self.total_product_price += self.vgab[x][2]
 
             self.textarea.insert(END, f"{self.vga.get()}\t\t{self.vgaqt.get()}\t  {(self.vgab[index][2])}\t\t")
-        
-        self.total = 0
+
         if self.osqt.get()!=0 :
             index = -1
             for x in range(len(self.ssdb)):
                 if self.ssdb[x][1] == self.os.get():
                     index = x
-                    self.total += self.ssdb[x][2] 
-            self.textarea.insert(END, f"{self.os.get()}\t\t{self.osqt.get()}\t  {(self.ssdb[index][2])}")
+                    self.total_product_price += self.ssdb[x][2] 
+            self.textarea.insert(END, f"{self.os.get()}\t\t{self.osqt.get()}\t  {(self.ssdb[index][2])}\t\t")
 
-        self.total = 0 
         if self.ramqt.get()!=0 :
             index = -1
             for x in range(len(self.ramdb)):
                 if self.ramdb[x][1] == self.ram.get():
                     index = x
-                    self.total += self.ramdb[x][2]
-            self.textarea.insert(END, f"{self.ram.get()}\t\t{self.ram.get()}\t  {(self.ram[index][2])}")
+                    self.total_product_price += self.ramdb[x][2]
+            self.textarea.insert(END, f"{self.ram.get()}\t\t{self.ram.get()}\t  {(self.ramdb[index][2])}\t\t")
         
-        self.total = 0
         if self.monitorqt.get()!=0 :
             index = -1
             for x in range(len(self.mondb)):
                 if self.mondb[x][1] == self.monitor.get():
                     index = x
-                    self.total += self.mondb[x][2] 
+                    self.total_product_price += self.mondb[x][2] 
             self.textarea.insert(END, f"{self.monitor.get()}\t\t{self.monitorqt.get()}\t  {(self.mondb[index][2])}")
 
         self.textarea.insert(END,"\n-----------------------------------")
-        self.textarea.insert(END, f"\nTotal price\t\t\t{self.billing_price}")
+        self.textarea.insert(END, f"\nTotal price\t\t\t{self.total_product_price}")
         self.save_bill()
         
 
