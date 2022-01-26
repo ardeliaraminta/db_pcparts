@@ -3,8 +3,17 @@ import math
 import random
 from tkinter import messagebox
 import os
+from tokenize import String
+
+from matplotlib.pyplot import get
+import db
+
+
 
 class Bill_App:
+
+    ssdb = []
+
     def __init__(self, root):
         self.root = root
         self.root.geometry("1350x700+0+0")
@@ -25,9 +34,16 @@ class Bill_App:
         self.cpuqt = IntVar()
         self.cpu = StringVar()
 
-        self.face_wash = IntVar()
-        self.spray = IntVar()
+        self.ramqt = IntVar()
+        self.ram = StringVar()
+
+        self.monitorqt = IntVar()
+        self.monitor = StringVar()
+
+
+
         self.gel = IntVar()
+
         self.loshan = IntVar()
 
         # ========================total price============
@@ -44,9 +60,9 @@ class Bill_App:
 
         self.c_name=StringVar()
         self.c_phone=StringVar()
-        self.bill_no=StringVar()
+        self.customer_email=StringVar()
         x = random.randint(1000,9999)
-        self.bill_no.set(str(x))
+        self.customer_email.set(str(x))
         self.search_bill=StringVar()
 
 
@@ -61,10 +77,10 @@ class Bill_App:
         phonenum = Label(F1, text=" Phone Number",bg="black",fg="white" , font=("times new roman",18,"bold")).grid(row=0, column=2, padx=20, pady=5)
         p_txt = Entry(F1,width=15,textvariable=self.c_phone,font="arial 15",bd=7,relief=SUNKEN).grid(row=0, column=3, padx=10, pady=5)
 
-        bill = Label(F1, text=" Bill",bg="black",fg="white" , font=("times new roman",18,"bold")).grid(row=0, column=4, padx=20, pady=5)
-        bill_tct = Entry(F1,width=15,textvariable=self.bill_no,font="arial 15",bd=7,relief=SUNKEN).grid(row=0, column=5, padx=10, pady=5)
+        bill = Label(F1, text=" Customer's Email",bg="black",fg="white" , font=("times new roman",18,"bold")).grid(row=0, column=4, padx=20, pady=5)
+        bill_tct = Entry(F1,width=15,textvariable=self.customer_email,font="arial 15",bd=7,relief=SUNKEN).grid(row=0, column=5, padx=10, pady=5)
 
-        bill_btn = Button(F1, text="Search",command=self.find_bill,textvariable=self.search_bill, width=10, font="arial 12 bold").grid(row=0, column=6, pady=10,padx=10)
+        # bill_btn = Button(F1, text="Search",command=self.find_bill,textvariable=self.search_bill, width=10, font="arial 12 bold").grid(row=0, column=6, pady=10,padx=10)
 
         # ============================ PRODUCT =============================================================
 
@@ -73,42 +89,69 @@ class Bill_App:
         F2.place(x=5, y=180,width=360, height=380)
 
         card = Label(F2, text="VGA :", font=("Times New Roman", 16, "bold"),bg="maroon",fg="white").grid(row=0, column=0, padx=10, pady=10, sticky="w")
-        vga_qt = Entry(F2, width=10,textvariable=self.vgaqt, font=("times new roman", 16, "bold"),bd=2, relief=SUNKEN).grid(row=0, column=1,padx=10,pady=10)
-        self.options_list3 = ["GEFORCE RTX 3090 ", "GEFORCE RTX 3080", "GEOFORCE RTX 3070", "GEFORCE RTX 3060"]
-        self.vga.set("VGA:")
+        vga_qt = Entry(F2, width=7,textvariable=self.vgaqt, font=("times new roman", 16, "bold"),bd=2, relief=SUNKEN).grid(row=0, column=1,padx=10,pady=10)
+
+        vgab = db.get_products_by_category("Graphics Card")
         
-
+        self.options_list3 = [vgab[i][1] for i in range(len(vgab))]
+        self.vga.set("VGA:")
         vga = OptionMenu(F2,self.vga, *self.options_list3)
-        vga.place(x=98,y=15,width=50,height=30)
+        vga.place(x=98,y=15,width=80,height=30)
+
+        '''
+        [(0, 'Nvidia GTX 2070', 15),
+        (1, 'Nvidia RTX 3080', 11)
+        ]
+
+        vga_dict = {
+            'Nvidia GTX 2070': {
+                'id' : 0,
+                'name' : 'Nvidia GTX 2070',
+                'stock' : 15
+            }
+        }
+
+        vga_dict['Nvidia GTX 2070']['name']
+        '''
+
+    
 
 
-        card2= Label(F2, text="OS :", font=("times new roman", 16, "bold"),bg="maroon",fg="white").grid(row=1, column=0, padx=10, pady=10, sticky="w")
-        osqt = Entry(F2, width=10,textvariable=self.osqt, font=("times new roman", 16, "bold"),bd=5, relief=SUNKEN).grid(row=1, column=1,padx=10,pady=10)
-        self.options_list4 = [" Windows Home 7", "Windows Home 8", "Windows Home 10"]
-        self.os.set("OS")
+        card2= Label(F2, text="SSD :", font=("times new roman", 16, "bold"),bg="maroon",fg="white").grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        osqt = Entry(F2, width=7,textvariable=self.osqt, font=("times new roman", 16, "bold"),bd=5, relief=SUNKEN).grid(row=1, column=1,padx=10,pady=10)
+        self.ssdb = db.get_products_by_category("SSD")
+
+        self.options_list4 = [self.ssdb[i][1] for i in range(len(self.ssdb))]
+        self.os.set("SSD")
 
         os = OptionMenu(F2,self.os, *self.options_list4)
-        os.place(x=100,y=65,width=50,height=30)
+        os.place(x=100,y=65,width=80,height=30)
+
+        print(self.options_list4)
 
 
-        card3 = Label(F2, text="VGA :", font=("Times New Roman", 16, "bold"),bg="maroon",fg="white").grid(row=0, column=0, padx=10, pady=10, sticky="w")
-        cpu_qt = Entry(F2, width=10,textvariable=self.cpuqt, font=("times new roman", 16, "bold"),bd=2, relief=SUNKEN).grid(row=0, column=1,padx=10,pady=10)
-        self.options_list5 = ["AMD Ryzen 9", "AMD Ryzen 7", "AMD Ryzen 5"]
-        self.cpu.set("CPU:")
+        ram_lb = Label(F2, text="RAM : ", font=("times new roman", 16, "bold"),bg="maroon",fg="white").grid(row=2, column=0, padx=10, pady=10, sticky="w")
+        ram_txt = Entry(F2, width=7, textvariable=self.ramqt , font=("times new roman", 16, "bold"),bd=5, relief=SUNKEN).grid(row=2, column=1,padx=10,pady=10)
 
-        cpu = OptionMenu(F2,self.cpu, *self.options_list5)
-        cpu.place(x=100,y=110,width=50,height=30)
+        ramdb= db.get_products_by_category("RAM")
+
+        self.options_list5 = [ramdb[i][1] for i in range(len(ramdb))]
+        self.ram.set("RAM:")
+
+        ram = OptionMenu(F2,self.ram, *self.options_list5)
+        ram.place(x=100,y=110,width=80,height=30)
 
 
+        monitor_lb = Label(F2, text="Monitor : ", font=("times new roman", 16, "bold"),bg="maroon",fg="white").grid(row=3, column=0, padx=10, pady=10, sticky="w")
+        monitor_txt = Entry(F2, width=7, textvariable=self.monitorqt , font=("times new roman", 16, "bold"),bd=5, relief=SUNKEN).grid(row=3, column=1,padx=10,pady=10)
 
+        mondb= db.get_products_by_category("MONITORS")
 
+        self.options_list5 = [mondb[i][1] for i in range(len(mondb))]
+        self.monitor.set("monitor:")
 
-
-        face_w_lb = Label(F2, text="CPU : ", font=("times new roman", 16, "bold"),bg="maroon",fg="white").grid(row=2, column=0, padx=10, pady=10, sticky="w")
-        face_w_txt = Entry(F2, width=10, textvariable=self.face_wash , font=("times new roman", 16, "bold"),bd=5, relief=SUNKEN).grid(row=2, column=1,padx=10,pady=10)
-
-        hair_s_lb = Label(F2, text="Monitor : ", font=("times new roman", 16, "bold"),bg="maroon",fg="white").grid(row=3, column=0, padx=10, pady=10, sticky="w")
-        hair_s_txt = Entry(F2, width=10, textvariable=self.spray , font=("times new roman", 16, "bold"),bd=5, relief=SUNKEN).grid(row=3, column=1,padx=10,pady=10)
+        mon = OptionMenu(F2,self.monitor, *self.options_list5)
+        mon.place(x=100,y=170,width=80,height=30)
 
         hair_g_lb = Label(F2, text="Power Supply :", font=("times new roman", 16, "bold"),bg="maroon",fg="white").grid(row=4, column=0, padx=10, pady=10, sticky="w")
         hair_g_txt = Entry(F2, width=10, textvariable=self.gel , font=("times new roman", 16, "bold"),bd=5, relief=SUNKEN).grid(row=4, column=1,padx=10,pady=10)
@@ -187,12 +230,13 @@ class Bill_App:
     def welcome_bill(self):
         self.textarea.delete('1.0',END)
         self.textarea.insert(END, "\t PC Parts Picker <3\n")
-        self.textarea.insert(END, f"\n Bill Number : {self.bill_no.get()}")
+        self.textarea.insert(END, f"\n Customer's Email : {self.customer_email.get()}")
         self.textarea.insert(END, f"\n Customer Name : {self.c_name.get()}")
         self.textarea.insert(END, f"\n Phone Number : {self.c_phone.get()}")
         self.textarea.insert(END, f"\n===================================")
         self.textarea.insert(END, f"Products\t\tQty\t  Price")
         self.textarea.insert(END, f"\n===================================")
+
 
 
     def bill_area(self):
@@ -201,7 +245,11 @@ class Bill_App:
         if self.vgaqt.get()!=0 :
             self.textarea.insert(END, f"VGA\t\t{self.vgaqt.get()}\t  {(self.vgaqt.get()*999)}")
         if self.osqt.get()!=0 :
-            self.textarea.insert(END, f"\Operating System\t\t{self.osqt.get()}\t  {(self.osqt.get()*199)}")
+            index = -1
+            for x in range(len(self.ssdb)):
+                if self.ssdb[x][1] == self.os.get():
+                    index = x 
+            self.textarea.insert(END, f"{self.os.get()}\t\t{self.osqt.get()}\t  {(self.ssdb[index][2])}")
         if self.cpuqt.get()!=0 :
             self.textarea.insert(END, f"\CPU\t\t{self.cpuqt.get()}\t  {(self.cpuqt.get()*1199)}")
 
@@ -222,21 +270,19 @@ class Bill_App:
         else:
             return
     
-    def find_bill(self):
-        present = "no"
-        for i in os.listdir("Bills/"):
-            if i.split('.')[0]==self.search_bill.get():
-                f1 = open(f"Bills/{i}","r")
-                self.textarea.delete('1.0',END)
-                for d in f1:
-                    self.textarea.insert(END,d)
-                f1.close()
-                present="yes"
-        if present=="no":
-            messagebox.showerror("Error","Invalid Bill No.")
-
-
-        
+    # def find_bill(self):
+    #     present = "no"
+    #     for i in os.listdir("Bills/"):
+    #         if i.split('.')[0]==self.search_bill.get():
+    #             f1 = open(f"Bills/{i}","r")
+    #             self.textarea.delete('1.0',END)
+    #             for d in f1:
+    #                 self.textarea.insert(END,d)
+    #             f1.close()
+    #             present="yes"
+    #     if present=="no":
+    #         messagebox.showerror("Error","Invalid Bill No.")
+       
 
 root = Tk()
 obj = Bill_App(root)

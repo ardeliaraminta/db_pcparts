@@ -3,6 +3,8 @@ from tkinter import ttk, messagebox
 import pymysql
 import os
 
+
+
 class login_page:
     def __init__(self, root):
         self.window = root
@@ -44,10 +46,10 @@ class login_page:
             try:
                 connection=pymysql.connect(host="sigma.jasoncoding.com",user="ardeliaraminta",password="lunathemoonchild",database="pcparts_db", port = 5555)
                 cur = connection.cursor()
-                cur.execute("select * from user_register where email=%s and password=%s",(self.email_entry.get(),self.password_entry.get()))
+                cur.execute("select * from Customers where email=%s and password=%s",(self.email_entry.get(),self.password_entry.get()))
                 row=cur.fetchone()
                 if row == None:
-                    messagebox.showerror("Error!","Invalid USERNAME & PASSWORD",parent=self.window)
+                    messagebox.showerror("Error!","Invalid Data Entry" ,parent=self.window)
                 else:
                     messagebox.showinfo("Success","Welcome to PC Parts picker",parent=self.window)
                     self.reset_fields()
@@ -63,7 +65,7 @@ class login_page:
             try:
                 connection=pymysql.connect(host="sigma.jasoncoding.com",user="ardeliaraminta",password="lunathemoonchild",database="pcparts_db", port = 5555)
                 cur = connection.cursor()
-                cur.execute("select * from user_register where email=%s", self.email_entry.get())
+                cur.execute("select * from Customers where email=%s", self.email_entry.get())
                 row=cur.fetchone()
                 if row == None:
                     messagebox.showerror("Error!", "Email Id doesn't exists")
@@ -116,7 +118,7 @@ class login_page:
                     messagebox.showerror("Error!", "Please fill the all entry field correctly")
                 else:
                     try:
-                        cur.execute("UPDATE user_register set password=%s where email=%s", (self.new_pass.get(),self.email_entry.get()))
+                        cur.execute("UPDATE Customers set password=%s where email=%s", (self.new_pass.get(),self.email_entry.get()))
                         connection.commit()
 
                         messagebox.showinfo("Successful", "Password has changed successfully")
