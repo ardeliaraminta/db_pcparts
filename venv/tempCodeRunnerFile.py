@@ -1,1 +1,0 @@
-print(receipt("John","gagsg"))

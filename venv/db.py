@@ -362,3 +362,13 @@ def get_products_by_manufacturer(manufacturer_name):
 
 print(get_products_by_manufacturer("Nvidia"))
 
+def get_products_by_category(category_name):
+  __db = getDb()
+  cursor = __db.cursor()
+
+  query = f"SELECT * from Products p INNER JOIN Category cat ON p.category_id = cat.id WHERE cat.name ='{category_name}'"
+  cursor.execute(query)
+
+  return cursor.fetchall()
+
+print(get_products_by_category("RAM"))
