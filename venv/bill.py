@@ -6,7 +6,7 @@ import os
 from tokenize import String
 from matplotlib.pyplot import get
 import db
-
+from data import OrderTransaction, Data
 
 
 class Bill_App:
@@ -194,9 +194,13 @@ class Bill_App:
         btn_F = Frame(F6,bd=7,relief=GROOVE)
         btn_F.place(x=750, width=580, height=105)
 
-        total_btn = Button(btn_F, command=self.total, text="Total", bg="maroon", fg="white",pady=15, width=11, font="arial 12 bold").grid(row=0, column=0,padx=5,pady=5)
-        Gbill = Button(btn_F, command=self.bill_area, text="Generate Bill", bg="maroon", fg="white",pady=15, width = 20, font="arial 12 bold").grid(row=0, column=1,padx=5,pady=5)
-        Clear = Button(btn_F, text="Clear", bg="maroon", fg="white",pady=15, width=11, font="arial 12 bold").grid(row=0, column=2,padx=5,pady=5)
+
+        Gbill = Button(btn_F, command=self.bill_area, text="Generate Total", bg="maroon", fg="white",pady=15, width = 20, font="arial 12 bold").grid(row=0, column=1,padx=5,pady=5)
+        payment_choice = Button(btn_F, command =self.redirect_window,text="Payment", bg="maroon", fg="white",pady=15, width=11, font="arial 12 bold").grid(row=0, column=2,padx=5,pady=5)
+        
+        
+        
+        
         Exit = Button(btn_F, text="Exit", bg="maroon", fg="white",pady=15, width=11, font="arial 12 bold").grid(row=0, column=3,padx=5,pady=5)
         self.welcome_bill()
 
@@ -224,12 +228,19 @@ class Bill_App:
         self.welcome_bill()
         # products
         self.total_product_price = 0
+        Data.transactions = []
+
         if self.vgaqt.get()!=0 :
             index = -1
             for x in range(len(self.vgab)):
                 if self.vgab[x][1] == self.vga.get():
                     index = x
-                    self.total_product_price += self.vgab[x][2]
+                    transaction = OrderTransaction()
+                    transaction.product_id = self.vgab[x][0]
+                    transaction.quantity = self.vgaqt.get()
+                    transaction.total_amount = self.vgab[x][2] * transaction.quantity
+                    Data.transactions.append(transaction)
+                    self.total_product_price += self.vgab[x][2]*self.vgaqt.get()
 
             self.textarea.insert(END, f"{self.vga.get()}\t\t{self.vgaqt.get()}\t  {(self.vgab[index][2])}\t\t")
 
@@ -238,7 +249,13 @@ class Bill_App:
             for x in range(len(self.ssdb)):
                 if self.ssdb[x][1] == self.os.get():
                     index = x
-                    self.total_product_price += self.ssdb[x][2] 
+                    transaction = OrderTransaction()
+                    transaction.product_id = self.ssdb[x][0]
+                    transaction.quantity = self.osqt.get()
+                    transaction.total_amount = self.ssdb[x][2] * transaction.quantity
+                    Data.transactions.append(transaction)
+                    self.total_product_price += self.ssdb[x][2]*self.osqt.get()
+
             self.textarea.insert(END, f"{self.os.get()}\t\t{self.osqt.get()}\t  {(self.ssdb[index][2])}\t\t")
 
         if self.ramqt.get()!=0 :
@@ -246,15 +263,27 @@ class Bill_App:
             for x in range(len(self.ramdb)):
                 if self.ramdb[x][1] == self.ram.get():
                     index = x
-                    self.total_product_price += self.ramdb[x][2]
-            self.textarea.insert(END, f"{self.ram.get()}\t\t{self.ram.get()}\t  {(self.ramdb[index][2])}\t\t")
+                    transaction = OrderTransaction()
+                    transaction.product_id = self.ramdb[x][0]
+                    transaction.quantity = self.ramqt.get()
+                    transaction.total_amount = self.ramdb[x][2] * transaction.quantity
+                    Data.transactions.append(transaction)
+                    self.total_product_price += self.ramdb[x][2]*self.ramqt.get()
+        
+            self.textarea.insert(END, f"{self.ram.get()}\t\t{self.ramqt.get()}\t  {(self.ramdb[index][2])}\t\t")
         
         if self.monitorqt.get()!=0 :
             index = -1
             for x in range(len(self.mondb)):
                 if self.mondb[x][1] == self.monitor.get():
                     index = x
-                    self.total_product_price += self.mondb[x][2] 
+                    transaction = OrderTransaction()
+                    transaction.product_id = self.mondb[x][0]
+                    transaction.quantity = self.monitorqt.get()
+                    transaction.total_amount = self.mondb[x][2] * transaction.quantity
+                    Data.transactions.append(transaction)
+                    self.total_product_price += self.mondb[x][2]*self.monitorqt.get()
+
             self.textarea.insert(END, f"{self.monitor.get()}\t\t{self.monitorqt.get()}\t  {(self.mondb[index][2])}")
 
         tax_product = self.total_product_price*0.1
@@ -269,13 +298,13 @@ class Bill_App:
 
         # ****************************saving of bill*******************************************************
     def save_bill(self):
-        op = messagebox.askyesno("save Bill","Do you want to save the bil?")
+        op = messagebox.askyesno("Save Bill","Do you want to save the bil?")
         if op>0:
             self.bill_data = self.textarea.get('1.0',END)
-            f1 = open("Bills/"+str(self.bill_no.get())+".txt","w")
+            f1 = open("Bills/"+str(self.customer_email.get())+".txt","w")
             f1.write(self.bill_data)
             f1.close
-            messagebox.showinfo("saved", f"Bill no. : {self.bill_no.get()} saved successfully")
+            messagebox.showinfo("saved", f"Bill no. : {self.customer_email.get()} saved successfully")
         else:
             return
     
@@ -291,7 +320,13 @@ class Bill_App:
     #             present="yes"
     #     if present=="no":
     #         messagebox.showerror("Error","Invalid Bill No.")
-       
+    def redirect_window(self):
+        self.root.destroy()
+        from payment import payment_window
+        root = Tk()
+        obj = payment_window(root)
+        root.mainloop()
+
 
 root = Tk()
 obj = Bill_App(root)

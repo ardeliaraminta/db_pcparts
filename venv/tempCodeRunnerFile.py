@@ -1,0 +1,1 @@
+, bg="maroon", fg="white",pady=15, width = 20, font="arial 12 bold").grid(row=0, column=1,padx=5,pady=5)

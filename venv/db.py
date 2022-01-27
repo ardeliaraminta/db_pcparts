@@ -248,6 +248,9 @@ def get_total_receipt(first_name, last_name):
     total+=cost[0]
   return total
 
+
+
+
 def get_products_per_category(category_name):
   '''Returns all products in a category'''
   __db = getDb()
