@@ -21,9 +21,9 @@ class inventory:
         self.frame3 = Frame(self.frame2, bg="white")
         self.frame3.place(x=140,y=150,width=500,height=450)
 
-        self.product_name = Label(self.frame3,text="Product Name", font=("times new roman",20,"italic"),bg="white", fg="black").place(x=50,y=40)
-        self.product_name = Entry(self.frame3,font=("times new roman",15,"italic"),bg="white",fg="black")
-        self.product_name.place(x=50, y=80, width=300)
+        self.product = Label(self.frame3,text="Product Name", font=("times new roman",20,"italic"),bg="white", fg="black").place(x=50,y=40)
+        self.product = Entry(self.frame3,font=("times new roman",15,"italic"),bg="white",fg="black")
+        self.product.place(x=50, y=80, width=300)
 
         self.price = Label(self.frame3,text="Price", font=("times new roman",20,"italic"),bg="white", fg="black").place(x=50,y=120)
         self.price = Entry(self.frame3,font=("times new roman",15,"italic"),bg="white",fg="black")
@@ -42,14 +42,14 @@ class inventory:
 # product_name, price, category_id, Stock
 
     def add_product(self):
-        if self.product_name.get()=="" or self.price.get()=="" or self.category.get()=="" or self.stock.get()=="":
+        if self.product.get()=="" or self.price.get()=="" or self.category.get()=="" or self.stock.get()=="":
             messagebox.showerror("Error!","All fields are required",parent=self.window)
 
         else:
             try:
                 connection = pymysql.connect(host="sigma.jasoncoding.com", user="ardeliaraminta", password="lunathemoonchild", database="pcparts_db", port=5555)
                 cur = connection.cursor()
-                cur.execute("SELECT * from Products where product_name=%s",self.product_name.get())
+                cur.execute("SELECT * from Products where product_name=%s",self.product.get())
                 row=cur.fetchone()
 
                 #check in the db if the email exists or not 
@@ -58,7 +58,7 @@ class inventory:
                 else:
                     cur.execute("INSERT into Products (product_name,price,category_id,Stock) values(%s,%s,%s,%s)",
                                     (
-                                        self.product_name.get(),
+                                        self.product.get(),
                                         self.price.get(),
                                         self.category.get(),
                                         self.stock.get(),
