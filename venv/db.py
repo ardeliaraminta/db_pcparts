@@ -205,13 +205,22 @@ def create_order_transaction(product_id,customer_id,quantity,payment_type,order_
   __db = getDb()
   cursor = __db.cursor()
 
-  query = ("INSERT INTO Order_Transaction (Customer_ID, Product_ID, quantity, Payment_type, Order_Date, Tax, total_amount) values ("
-  f"'{customer_id}', '{product_id}', '{quantity}', '{payment_type}', '{order_date}', '{get_tax(product_id)}', '{get_total_amount(product_id,quantity)}'"
-  ")")
-  cursor.execute(query)
-  query_to_update_stock = f"UPDATE Products SET Stock = Stock - {quantity} WHERE id = {product_id}"
-  cursor.execute(query_to_update_stock)
-  __db.commit()
+  query_check_stock=f"SELECT Stock FROM Products WHERE id = {product_id}"
+  cursor.execute(query_check_stock)
+  stock=cursor.fetchone()
+
+  if stock[0]==0:
+    return "Out of stock"
+  elif stock[0]<quantity:
+    return "Stock left"+str(stock[0])
+  else:
+    query = ("INSERT INTO Order_Transaction (Customer_ID, Product_ID, quantity, Payment_type, Order_Date, Tax, total_amount) values ("
+    f"'{customer_id}', '{product_id}', '{quantity}', '{payment_type}', '{order_date}', '{get_tax(product_id)}', '{get_total_amount(product_id,quantity)}'"
+    ")")
+    cursor.execute(query)
+    query_to_update_stock = f"UPDATE Products SET Stock = Stock - {quantity} WHERE id = {product_id}"
+    cursor.execute(query_to_update_stock)
+    __db.commit()
 
 def delete_product_from_order(product_id,order_id):
   '''Deletes a product from an order'''
@@ -222,13 +231,13 @@ def delete_product_from_order(product_id,order_id):
   cursor.execute(query)
   __db.commit()
 
-#join customer product and order on order
+
 def receipt(first_name,last_name):
   '''Returns a receipt of an order'''
   __db = getDb()
   cursor = __db.cursor()
 
-  query = "SELECT c.first_Name, c.last_Name, c.email, p.product_name, p.price, o.quantity, o.Payment_type, o.Order_Date, o.Tax, o.total_amount, t.name, s.first_name, s.last_name FROM Customers c INNER JOIN Order_Transaction o on c.id=o.Customer_ID INNER JOIN Products p on o.Product_ID=p.id INNER JOIN Category t on p.category_id=t.id INNER JOIN staff s on s.id=o.staff_id"
+  query = "SELECT c.first_Name, c.last_Name, c.email, p.product_name, p.price, o.quantity, o.Payment_type, o.Order_Date, o.Tax, o.total_amount, t.name, s.first_name, s.last_name, m.manufacturer FROM Customers c INNER JOIN Order_Transaction o on c.id=o.Customer_ID INNER JOIN Products p on o.Product_ID=p.id INNER JOIN Category t on p.category_id=t.id INNER JOIN staff s on s.id=o.staff_id INNER JOIN Manufacturers m on m.product_id=p.id "
   query+=f" WHERE c.first_Name='{first_name}' AND c.last_Name='{last_name}'"
   cursor.execute(query)
 
@@ -360,5 +369,6 @@ def get_products_by_manufacturer(manufacturer_name):
 
   return cursor.fetchall()
 
-print(get_products_by_manufacturer("Nvidia"))
 
+
+print(receipt('John','gagsg'))
