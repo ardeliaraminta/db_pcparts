@@ -52,6 +52,7 @@ class login_page:
                     messagebox.showerror("Error!","Invalid Data Entry" ,parent=self.window)
                 else:
                     messagebox.showinfo("Success","Welcome to PC Parts picker",parent=self.window)
+                    self.redirect_window2()
                     self.reset_fields()
                     connection.close()
 
@@ -65,7 +66,7 @@ class login_page:
             try:
                 connection=pymysql.connect(host="sigma.jasoncoding.com",user="ardeliaraminta",password="lunathemoonchild",database="pcparts_db", port = 5555)
                 cur = connection.cursor()
-                cur.execute("select * from Customers where email=%s", self.email_entry.get())
+                cur.execute("SELECT * from Customers where email=%s", self.email_entry.get())
                 row=cur.fetchone()
                 if row == None:
                     messagebox.showerror("Error!", "Email Id doesn't exists")
@@ -138,6 +139,13 @@ class login_page:
         from signup import SignUp
         root = Tk()
         obj = SignUp(root)
+        root.mainloop()
+
+    def redirect_window2(self):
+        self.window.destroy()
+        from bill import Bill_App
+        root = Tk()
+        obj = Bill_App(root)
         root.mainloop()
 
 

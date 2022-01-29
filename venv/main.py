@@ -32,8 +32,6 @@ class main:
 
 
 
-
-
     def redirect_window(self):
         self.window.destroy()
         from customer_login import login_page
