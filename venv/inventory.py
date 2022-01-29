@@ -5,10 +5,10 @@ from tkinter import *
 from tkinter import ttk, messagebox
 import pymysql
 
-class inventory:
+class Inventory:
     def __init__(self, root):
         self.window = root
-        self.window.title("Inventory")
+        self.window.title(" Parts Inventory")
         self.window.geometry("1280x800+0+0")
         self.window.config(bg = "white")
 
@@ -21,19 +21,19 @@ class inventory:
         self.frame3 = Frame(self.frame2, bg="white")
         self.frame3.place(x=140,y=150,width=500,height=450)
 
-        self.product = Label(self.frame3,text="Product Name", font=("times new roman",20,"italic"),bg="white", fg="black").place(x=50,y=40)
+        self.product = Label(self.frame3,text="Product Name", font=("times new roman",16,"italic"),bg="white", fg="black").place(x=50,y=40)
         self.product = Entry(self.frame3,font=("times new roman",15,"italic"),bg="white",fg="black")
         self.product.place(x=50, y=80, width=300)
 
-        self.price = Label(self.frame3,text="Price", font=("times new roman",20,"italic"),bg="white", fg="black").place(x=50,y=120)
+        self.price = Label(self.frame3,text="Price", font=("times new roman",16,"italic"),bg="white", fg="black").place(x=50,y=120)
         self.price = Entry(self.frame3,font=("times new roman",15,"italic"),bg="white",fg="black")
         self.price.place(x=50, y=160, width=300)
 
-        self.category = Label(self.frame3,text="Catagory", font=("times new roman",20,"italic"),bg="white", fg="black").place(x=50,y=200)
+        self.category = Label(self.frame3,text="Category", font=("times new roman",16,"italic"),bg="white", fg="black").place(x=50,y=200)
         self.category = Entry(self.frame3,font=("times new roman",15,"italic"),bg="white",fg="black")
         self.category.place(x=50, y=240, width=300)
 
-        self.stock = Label(self.frame3,text="Stock", font=("times new roman",20,"italic"),bg="white", fg="black").place(x=50,y=280)
+        self.stock = Label(self.frame3,text="Stock", font=("times new roman",16,"italic"),bg="white", fg="black").place(x=50,y=280)
         self.stock = Entry(self.frame3,font=("times new roman",15,"italic"),bg="white",fg="black")
         self.stock.place(x=50, y=320, width=300)
 
@@ -72,5 +72,5 @@ class inventory:
 
 if __name__ == "__main__":
     root = Tk()
-    obj = inventory(root)
+    obj = Inventory(root)
     root.mainloop()

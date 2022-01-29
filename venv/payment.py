@@ -10,7 +10,6 @@ from data import *
  
 class payment_window:
     def __init__(self, root):
-        """Define window for the app"""
         self.root = root
         self.root.geometry("1350x700+0+0")
         self.root["bg"] = "maroon"
@@ -71,9 +70,6 @@ class payment_window:
     def payment(self):
        self.textarea.insert(END, f"\t Payment Type : {self.pay_type.get()} \n")
 
-
-        
-        
 
     def welcome_bill(self):
         self.textarea.delete('1.0',END)

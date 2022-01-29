@@ -12,18 +12,18 @@ class login_page:
         self.window.geometry("1280x800+0+0")
         self.window.config(bg = "white")
 
-        self.frame1 = Frame(self.window, bg="maroon")
+        self.frame1 = Frame(self.window, bg="indianred")
         self.frame1.place(x=0, y=0, width=450, relheight = 1)
 
-        label1 = Label(self.frame1, text= "pc ", font=("times new roman", 40, "italic"), bg="black", fg="white").place(x=100,y=300)
-        label2 = Label(self.frame1, text= "picker ^^", font=("times new roman", 40, "italic"), bg="black", fg="white").place(x=162,y=300)
-        label3 = Label(self.frame1, text= "It's all about your choices", font=("times new roman", 13, "italic"), bg="black", fg="white").place(x=100,y=360)
+        label1 = Label(self.frame1, text= "pc ", font=("times new roman", 40, "italic"), bg="indianred", fg="white").place(x=100,y=300)
+        label2 = Label(self.frame1, text= "picker ^^", font=("times new roman", 40, "italic"), bg="indianred", fg="white").place(x=162,y=300)
+        label3 = Label(self.frame1, text= "It's all about your choices", font=("times new roman", 13, "italic"), bg="black", fg="white").place(x=100,y=380)
 
         self.frame2 = Frame(self.window, bg = "black")
         self.frame2.place(x=450,y=0,relwidth=1, relheight=1)
 
         self.frame3 = Frame(self.frame2, bg="white")
-        self.frame3.place(x=140,y=150,width=500,height=450)
+        self.frame3.place(x=140,y=150,width=450,height=450)
 
         self.email_label = Label(self.frame3,text="Email Address", font=("times new roman",20,"italic"),bg="white", fg="black").place(x=50,y=40)
         self.email_entry = Entry(self.frame3,font=("times new roman",15,"italic"),bg="white",fg="black")

@@ -71,7 +71,10 @@ class SignUp:
 
         self.terms = IntVar()
         terms_and_con = Checkbutton(frame,text="I Agree The Terms & Conditions",variable=self.terms,onvalue=1,offvalue=0,bg="white",font=("times new roman",12, "italic")).place(x=20,y=420)
-        self.signup = Button(frame,text="Sign Up",command=self.signup_func,font=("times new roman",15, "italic"),bd=0,cursor="hand2",bg="maroon",fg="white").place(x=120,y=470,width=250)
+        self.signup = Button(frame,text="Sign Up",command=self.signup_func,font=("times new roman",15, "italic"),bd=0,cursor="hand2",bg="indianred",fg="white").place(x=120,y=470,width=250)
+
+        self.sign_in = Button(frame,text="Already have an account?",command=self.redirect_window,font=("times new roman",12, "italic"),bd=0,cursor="hand2",bg="maroon",fg="white").place(x=120,y=520,width=250)
+
 
 
 
@@ -111,6 +114,7 @@ class SignUp:
                     connection.commit()
                     connection.close()
                     messagebox.showinfo("Congratulations!","Register Successful",parent=self.window)
+                    self.redirect_window()
                     self.reset_fields()
             except Exception as e:
                 messagebox.showerror("Error!",f"Error due to {str(e)}",parent=self.window)
@@ -127,9 +131,17 @@ class SignUp:
 
     def redirect_window(self):
         self.window.destroy()
-        from login import login_page
+        from customer_login import login_page
         root = Tk()
         obj = login_page(root)
+        root.mainloop()
+
+
+    def redirect_window2(self):
+        self.window.destroy()
+        from bill import Bill_App
+        root = Tk()
+        obj = Bill_App(root)
         root.mainloop()
 
 if __name__ == "__main__":
