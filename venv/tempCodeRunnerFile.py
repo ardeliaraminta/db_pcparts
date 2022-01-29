@@ -1,1 +1,1 @@
-print(receipt("John","gagsg"))
+Customers
