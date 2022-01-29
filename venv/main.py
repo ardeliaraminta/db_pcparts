@@ -26,7 +26,7 @@ class main:
 
 
         self.button1= Button(self.frame2,text="Customer",command=self.redirect_window,font=("times new roman",20, "italic"),bd=0,cursor="hand2",bg="black",fg="bisque").place(x=150,y=260,width=150)
-        self.button2= Button(self.frame2,text="Staff",command=self.redirect_window,font=("times new roman",20, "italic"),bd=0,cursor="hand2",bg="black",fg="bisque").place(x=320,y=260,width=150)
+        self.button2= Button(self.frame2,text="Staff",command=self.redirect_window2,font=("times new roman",20, "italic"),bd=0,cursor="hand2",bg="black",fg="bisque").place(x=320,y=260,width=150)
 
 
 
@@ -40,6 +40,14 @@ class main:
         root = Tk()
         obj = login_page(root)
         root.mainloop()
+
+    def redirect_window2(self):
+        self.window.destroy()
+        from staff_login import login_page
+        root = Tk()
+        obj = login_page(root)
+        root.mainloop()
+
 
 if __name__ == "__main__":
     root = Tk()
