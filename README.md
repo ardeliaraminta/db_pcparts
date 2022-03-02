@@ -13,7 +13,7 @@ Customer:
 ## Installation 
 
 If you would like to use this application as a user, the easiest way is to clone the repository. 
-User Manual 
+User Manual : http://2440065163ardelia.blog.binusian.org/2022/02/02/database-project-user-manual/
 
 ##### Pre-requisites:
 
